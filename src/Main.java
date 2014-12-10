@@ -60,7 +60,7 @@ class ProcessQuery extends Thread{
 			String result=qName+"\n";
 			for (Database i:db){
 				int p=0;
-				while ((p=i.dbString.indexOf(qString, p))!=-1){
+				while ((p=i.indexOf(qString, p))!=-1){
 					result+="    ["+i.dbName+"] at offset "+p+"\n";
 					found=true;
 					p+=qString.length();

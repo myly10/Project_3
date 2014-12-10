@@ -6,4 +6,8 @@ public class Database{
 		this.dbString=dbString;
 		this.dbName=dbName;
 	}
+
+	public int indexOf(String q, int p){
+		//TODO implement this
+	}
 }
