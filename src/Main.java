@@ -3,7 +3,10 @@ import java.util.Scanner;
 import java.util.Vector;
 
 public class Main{
-	static final int MAX_THREADS=Runtime.getRuntime().availableProcessors();
+	static final boolean isMultiThreaded=true;
+
+	static final int MAX_THREADS=isMultiThreaded?Runtime.getRuntime().availableProcessors():1;
+	private static final byte A=0x00, T=0x01, G=0x02, C=0x03;
 
 	public static void main(String[] args) throws IOException{
 		long time=System.currentTimeMillis();
@@ -45,7 +48,8 @@ public class Main{
 class ProcessQuery extends Thread{
 	@Override
 	public void run(){
-		String qName, qString;
+		String qName;
+		Query q;
 		Scanner qscn=SharedObjects.qscn;
 		Database[] db=SharedObjects.db;
 		while (true){
@@ -54,16 +58,16 @@ class ProcessQuery extends Thread{
 				qName=qscn.nextLine();
 				if (qName.equals(">EOF") || qName.equals("")) return;
 				qName=qName.substring(1);
-				qString=qscn.nextLine();
+				q=new Query(qscn.nextLine());
 			}
 			boolean found=false;
 			String result=qName+"\n";
 			for (Database i:db){
 				int p=0;
-				while ((p=i.indexOf(qString, p))!=-1){
+				while ((p=i.indexOf(q, p))!=-1){
 					result+="    ["+i.dbName+"] at offset "+p+"\n";
 					found=true;
-					p+=qString.length();
+					p+=q.length();
 				}
 			}
 			synchronized (SharedObjects.w){
