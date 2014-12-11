@@ -8,7 +8,7 @@ public class Main{
 	static final int MAX_THREADS=isMultiThreaded?Runtime.getRuntime().availableProcessors():1;
 	private static final byte A=0, T=1, G=2, C=3;
 
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws IOException, InterruptedException{
 		long time=System.currentTimeMillis();
 		File in=new File(args[0]), out=new File(args[2]), qf=new File(args[1]);
 		SharedObjects.db=dbReader(new BufferedInputStream(new FileInputStream(in)));
@@ -20,11 +20,7 @@ public class Main{
 		for (int i=0;i!=MAX_THREADS;++i)
 			(threadPool[i]=new ProcessQuery()).start();
 		for (Thread t:threadPool){
-			try{
-				t.join();
-			}catch (InterruptedException e){
-				e.printStackTrace();
-			}
+			t.join();
 		}
 		SharedObjects.w.close();
 		System.out.println("Total time: "+(System.currentTimeMillis()-time)+"ms. Exiting.");
