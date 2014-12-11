@@ -14,6 +14,7 @@ public class Main{
 		SharedObjects.db=dbReader(new BufferedInputStream(new FileInputStream(in)));
 		SharedObjects.qscn=new Scanner(new BufferedInputStream(new FileInputStream(qf)));
 		SharedObjects.w=new BufferedWriter(new FileWriter(out));
+		System.out.println("Read database finished in "+(System.currentTimeMillis()-time)+"ms");
 
 		Thread[] threadPool=new Thread[MAX_THREADS];
 		for (int i=0;i!=MAX_THREADS;++i)
@@ -26,7 +27,7 @@ public class Main{
 			}
 		}
 		SharedObjects.w.close();
-		System.out.println(System.currentTimeMillis()-time);
+		System.out.println("Total time: "+(System.currentTimeMillis()-time)+"ms. Exiting.");
 	}
 
 	public static Database[] dbReader(BufferedInputStream r) throws IOException{
