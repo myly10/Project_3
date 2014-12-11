@@ -6,7 +6,7 @@ public class Main{
 	static final boolean isMultiThreaded=true;
 
 	static final int MAX_THREADS=isMultiThreaded?Runtime.getRuntime().availableProcessors():1;
-	private static final byte A=0x00, T=0x01, G=0x02, C=0x03;
+	private static final byte A=0, T=1, G=2, C=3;
 
 	public static void main(String[] args) throws IOException{
 		long time=System.currentTimeMillis();
@@ -48,15 +48,29 @@ public class Main{
 class ProcessQuery extends Thread{
 	@Override
 	public void run(){
+		long time=System.currentTimeMillis();
+		synchronized (System.out){
+			System.out.println("Thread "+currentThread().getId()+" started...");
+		}
 		String qName;
 		Query q;
 		Scanner qscn=SharedObjects.qscn;
 		Database[] db=SharedObjects.db;
 		while (true){
 			synchronized (SharedObjects.qscn){
-				if (!qscn.hasNextLine()) return;
+				if (!qscn.hasNextLine()){
+					synchronized (System.out){
+						System.out.println("Thread "+currentThread().getId()+" stoppd... in "+(System.currentTimeMillis()-time)+"ms");
+					}
+					return;
+				}
 				qName=qscn.nextLine();
-				if (qName.equals(">EOF") || qName.equals("")) return;
+				if (qName.equals(">EOF") || qName.equals("")){
+					synchronized (System.out){
+						System.out.println("Thread "+currentThread().getId()+" stoppd... in "+(System.currentTimeMillis()-time)+"ms");
+					}
+					return;
+				}
 				qName=qName.substring(1);
 				q=new Query(qscn.nextLine());
 			}
