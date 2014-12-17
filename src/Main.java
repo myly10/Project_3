@@ -50,35 +50,25 @@ class ProcessQuery extends Thread{
 			System.out.println("Thread "+currentThread().getId()+" started...");
 		}
 		String qName;
-		Query q;
+		String q;
 		Scanner qscn=SharedObjects.qscn;
 		Database[] db=SharedObjects.db;
+		String result;
 		while (true){
 			synchronized (SharedObjects.qscn){
-				if (!qscn.hasNextLine()){
-					synchronized (System.out){
-						System.out.println("Thread "+currentThread().getId()+" stoppd... in "+(System.currentTimeMillis()-time)+"ms");
-					}
-					return;
-				}
+				if (!qscn.hasNextLine()){break;}
 				qName=qscn.nextLine();
-				if (qName.equals(">EOF") || qName.equals("")){
-					synchronized (System.out){
-						System.out.println("Thread "+currentThread().getId()+" stoppd... in "+(System.currentTimeMillis()-time)+"ms");
-					}
-					return;
-				}
+				if (qName.equals(">EOF") || qName.equals("")){break;}
 				qName=qName.substring(1);
-				q=new Query(qscn.nextLine());
+				q=qscn.nextLine();
 			}
 			boolean found=false;
-			String result=qName+"\n";
+			result=qName+"\n";
 			for (Database i:db){
-				int p=0;
-				while ((p=i.indexOf(q, p))!=-1){
+				int p=i.indexOf(q,0);
+				if (p!=-1){
 					result+="    ["+i.dbName+"] at offset "+p+"\n";
 					found=true;
-					p+=q.length();
 				}
 			}
 			synchronized (SharedObjects.w){
@@ -90,6 +80,9 @@ class ProcessQuery extends Thread{
 					e.printStackTrace();
 				}
 			}
+		}
+		synchronized (System.out){
+			System.out.println("Thread "+currentThread().getId()+" stopped... in "+(System.currentTimeMillis()-time)+"ms");
 		}
 	}
 }
