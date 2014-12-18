@@ -45,7 +45,7 @@ public class Main{
 class ProcessQuery extends Thread{
 	@Override
 	public void run(){
-		long time=System.currentTimeMillis();
+		long time=System.currentTimeMillis(), t=time;
 		synchronized (System.out){
 			System.out.println("Thread "+currentThread().getId()+" started...");
 		}
@@ -56,9 +56,9 @@ class ProcessQuery extends Thread{
 		String result;
 		while (true){
 			synchronized (SharedObjects.qscn){
-				if (!qscn.hasNextLine()){break;}
+				if (!qscn.hasNextLine()) break;
 				qName=qscn.nextLine();
-				if (qName.equals(">EOF") || qName.equals("")){break;}
+				if (qName.equals(">EOF") || qName.equals("")) break;
 				qName=qName.substring(1);
 				q=qscn.nextLine();
 			}
@@ -78,6 +78,12 @@ class ProcessQuery extends Thread{
 					w.write(result+"\n");
 				}catch (IOException e){
 					e.printStackTrace();
+				}
+			}
+			if (System.currentTimeMillis()-t>1000){
+				t=System.currentTimeMillis();
+				synchronized (System.out){
+					System.out.print("\rThread "+currentThread().getId()+" Time: "+(System.currentTimeMillis()-time)+"ms Processing: "+qName+"   ");
 				}
 			}
 		}
